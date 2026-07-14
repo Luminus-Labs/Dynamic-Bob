@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -210,6 +211,7 @@ public class OverlayLayoutSettingActivity extends AppCompatActivity {
     }
 
     private void onChange() {
+        Log.d("OverlaySettings", "Broadcasting layout change: w=" + w.getValue() + ", h=" + h.getValue() + ", x=" + x.getValue() + ", y=" + y.getValue());
         sharedPreferences.edit().putFloat("overlay_w", w.getValue()).apply();
         sharedPreferences.edit().putFloat("overlay_h", h.getValue()).apply();
         sharedPreferences.edit().putFloat("overlay_gap", gap.getValue()).apply();
@@ -217,6 +219,7 @@ public class OverlayLayoutSettingActivity extends AppCompatActivity {
         sharedPreferences.edit().putFloat("overlay_y", y.getValue()).apply();
         updateTexts();
         Intent intent = new Intent(getPackageName() + ".OVERLAY_LAYOUT_CHANGE");
+        intent.setPackage(getPackageName());
         Bundle b = new Bundle();
         sharedPreferences.getAll().forEach((key, val) -> {
             if (val instanceof Float) {

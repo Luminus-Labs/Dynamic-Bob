@@ -87,6 +87,8 @@ public class OverlayService extends AccessibilityService {
         // boolean setblurback;
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("OverlayService", "onReceive: " + (intent != null ? intent.getAction() : "null"));
+            if (intent == null) return;
             if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
                 if (sharedPreferences.getBoolean("enable_on_lockscreen", false)) return;
                 if (mView != null) {
@@ -100,6 +102,7 @@ public class OverlayService extends AccessibilityService {
             } else if (intent.getAction().equals(getPackageName() + ".OVERLAY_LAYOUT_CHANGE")) {
                 Bundle settings = Objects.requireNonNull(intent.getExtras()).getBundle("settings");
                 assert settings != null;
+                Log.d("OverlayService", "Received layout change broadcast: " + settings.toString());
                 for (String s : settings.keySet()) {
                     if (settings.get(s) instanceof Float) {
                         sharedPreferences.putFloat(s, settings.getFloat(s));
@@ -113,9 +116,13 @@ public class OverlayService extends AccessibilityService {
                     gap = dpToInt((int) sharedPreferences.getFloat("overlay_gap", 50));
                     y = (int) (sharedPreferences.getFloat("overlay_y", 0.67f) * 0.01 * metrics.heightPixels);
                     x = (int) (sharedPreferences.getFloat("overlay_x", 0) * 0.01 * metrics.widthPixels);
+                    
+                    Log.d("OverlayService", "Updating layout: w=" + minWidth + ", h=" + minHeight + ", x=" + x + ", y=" + y);
+                    
                     mParams.y = y;
                     mParams.x = x;
                     mParams.height = minHeight;
+                    mParams.width = minWidth;
                     if (mView.findViewById(R.id.blank_space) != null) {
                         mView.findViewById(R.id.blank_space).setMinimumWidth(gap);
                     }
