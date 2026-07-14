@@ -266,9 +266,9 @@ public class OverlayService extends AccessibilityService {
             if (sharedPreferences.getBoolean("clip_copy_enabled", true)) {
                 ClipboardManager clipboard = (ClipboardManager)
                         getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("NothingLand error log", throwable.getMessage() + " : " + Arrays.toString(throwable.getStackTrace()));
+                ClipData clip = ClipData.newPlainText("NoLand error log", throwable.getMessage() + " : " + Arrays.toString(throwable.getStackTrace()));
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, "NothingLand Crashed, logs copied to clipboard", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "NoLand Crashed, logs copied to clipboard", Toast.LENGTH_SHORT).show();
             }
             Runtime.getRuntime().exit(0);
         });
@@ -347,7 +347,7 @@ public class OverlayService extends AccessibilityService {
         last_min_size = minWidth;
         WindowManager.LayoutParams mParams = getParams(minWidth, minHeight, flags);
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        getBaseContext().setTheme(R.style.Theme_TheGlitchh);
+        getBaseContext().setTheme(R.style.Theme_Luminus);
         mView = layoutInflater.inflate(R.layout.overlay_layout, null);
 
 

@@ -24,7 +24,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TheGlitchh"
+        android:theme="@style/Theme.Luminus"
         tools:targetApi="35">
         <provider
             android:name="androidx.core.content.FileProvider"

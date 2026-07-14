@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TheGlitchh" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.Luminus" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
         <item name="colorOnError">@color/md_theme_dark_onError</item>
         <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
