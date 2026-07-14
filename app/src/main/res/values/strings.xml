@@ -14,7 +14,7 @@
     <string name="configure_app_shortcuts">Configure App Shortcuts</string>
 
     <!-- Missing strings inferred from layout usages -->
-    <string name="enable_smart_edge">Enable Smart Edge</string>
+    <string name="enable_smart_edge">Enable NoLand</string>
     <string name="welcome">Welcome</string>
     <string name="to_get_started_the_app_needs_some_required_permissions">To get started, the app needs some required permissions</string>
     <string name="notification_access">Notification Access</string>
