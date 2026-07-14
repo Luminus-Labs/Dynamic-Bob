@@ -5,3 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Status-In_Development-yellow?style=for-the-badge" alt="Status">
 </p>
+
+<p align="center">
+  <strong>NoLand</strong> - The New Generation of Dynamic Islands for Android. This isn't just another project, it's a revolution.
+</p>
