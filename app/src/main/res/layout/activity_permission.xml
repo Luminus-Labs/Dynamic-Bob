@@ -1,197 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/welcome"
-        android:fontFamily="@font/ndot"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/to_get_started_the_app_needs_some_required_permissions"
-        android:textAppearance="@style/MaterialAlertDialog.Material3.Body.Text"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-
-
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/notification_access"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:checkable="false"
-        android:clickable="true"
-        android:elevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="?attr/colorOutline"
-        app:cardCornerRadius="24dp"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@+id/textView2">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/ndot"
+            android:text="@string/welcome"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+            android:textColor="?attr/colorPrimary" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:alpha="0.7"
+            android:text="@string/to_get_started_the_app_needs_some_required_permissions"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/notification_access"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <CheckBox
-                android:id="@+id/notification_access_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="false"
-                android:focusable="false" />
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/notification_access_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/notification_access"
-                    android:fontFamily="@font/ndot"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:focusable="false" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/needed_to_show_notifications_and_media_sessions"
-                    android:textColor="@color/not_quite_white"
-                    android:textSize="14sp" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ndot"
+                        android:text="@string/notification_access"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:alpha="0.6"
+                        android:text="@string/needed_to_show_notifications_and_media_sessions"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/record_audio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:checkable="false"
-        android:clickable="true"
-        android:elevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="?attr/colorOutline"
-        app:cardCornerRadius="24dp"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@+id/notification_access">
-
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/record_audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <CheckBox
-                android:id="@+id/record_audio_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="false"
-                android:focusable="false" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/record_audio_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/record_audio_from_apps"
-                    android:fontFamily="@font/ndot"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:focusable="false" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/needed_to_show_song_visualizer_never_to_be_used_for_recording_mic_audio"
-                    android:textColor="@color/not_quite_white"
-                    android:textSize="14sp" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ndot"
+                        android:text="@string/record_audio_from_apps"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:alpha="0.6"
+                        android:text="@string/needed_to_show_song_visualizer_never_to_be_used_for_recording_mic_audio"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/storage_access"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:checkable="false"
-        android:clickable="true"
-        android:elevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="?attr/colorOutline"
-        app:cardCornerRadius="24dp"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@+id/record_audio">
-
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/storage_access"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <CheckBox
-                android:id="@+id/storage_access_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="false"
-                android:focusable="false" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/storage_access_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/Storage_permission"
-                    android:fontFamily="@font/ndot"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:focusable="false" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/Storage_perm_desc"
-                    android:textColor="@color/not_quite_white"
-                    android:textSize="14sp" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ndot"
+                        android:text="@string/Storage_permission"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:alpha="0.6"
+                        android:text="@string/Storage_perm_desc"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continue_btn"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:text="Continue to Dashboard"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            app:cornerRadius="28dp" />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,7 +1,6 @@
 package com.luminus.labs.noland.plugins.AppShortcut;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -9,16 +8,21 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.CheckBox;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.luminus.labs.noland.R;
 
 import java.util.ArrayList;
@@ -29,11 +33,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AppShortcutPickerActivity extends AppCompatActivity {
-    private LinearLayout appListContainer;
+    private RecyclerView recyclerView;
+    private AppAdapter adapter;
     private EditText searchEditText;
     private SharedPreferences sharedPreferences;
-    private List<AppShortcutIsland.AppInfo> allApps;
-    private List<AppShortcutIsland.AppInfo> filteredApps;
+    private List<AppShortcutIsland.AppInfo> allApps = new ArrayList<>();
+    private List<AppShortcutIsland.AppInfo> filteredApps = new ArrayList<>();
     private Set<String> selectedPackages;
     private static final String PREF_SELECTED_APPS = "app_shortcut_selected_apps";
     private static final int MAX_SHORTCUTS = 6;
@@ -44,17 +49,18 @@ public class AppShortcutPickerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app_shortcut_picker);
         
         sharedPreferences = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
-        appListContainer = findViewById(R.id.app_list_container);
+        recyclerView = findViewById(R.id.app_list_recycler);
         searchEditText = findViewById(R.id.search_apps);
-        AppCompatButton saveButton = findViewById(R.id.save_button);
-        AppCompatButton cancelButton = findViewById(R.id.cancel_button);
+        MaterialButton saveButton = findViewById(R.id.save_button);
+        MaterialButton cancelButton = findViewById(R.id.cancel_button);
         
-        allApps = new ArrayList<>();
-        filteredApps = new ArrayList<>();
         selectedPackages = new HashSet<>(sharedPreferences.getStringSet(PREF_SELECTED_APPS, new HashSet<>()));
         
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new AppAdapter();
+        recyclerView.setAdapter(adapter);
+
         loadAllApps();
-        displayApps(allApps);
         
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -74,87 +80,102 @@ public class AppShortcutPickerActivity extends AppCompatActivity {
     }
 
     private void loadAllApps() {
-        PackageManager pm = getPackageManager();
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-        
-        for (ApplicationInfo packageInfo : packages) {
-            // Skip system apps
-            if ((packageInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
-                try {
-                    String appName = pm.getApplicationLabel(packageInfo).toString();
-                    Drawable icon = pm.getApplicationIcon(packageInfo);
-                    allApps.add(new AppShortcutIsland.AppInfo(appName, packageInfo.packageName, icon));
-                } catch (Exception e) {
-                    e.printStackTrace();
+        new Thread(() -> {
+            PackageManager pm = getPackageManager();
+            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+            List<AppShortcutIsland.AppInfo> loadedApps = new ArrayList<>();
+            
+            for (ApplicationInfo packageInfo : packages) {
+                if ((packageInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0 || pm.getLaunchIntentForPackage(packageInfo.packageName) != null) {
+                    try {
+                        String appName = pm.getApplicationLabel(packageInfo).toString();
+                        Drawable icon = pm.getApplicationIcon(packageInfo);
+                        loadedApps.add(new AppShortcutIsland.AppInfo(appName, packageInfo.packageName, icon));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
-        
-        // Sort alphabetically
-        Collections.sort(allApps, (a, b) -> a.appName.compareToIgnoreCase(b.appName));
+            
+            Collections.sort(loadedApps, (a, b) -> a.appName.compareToIgnoreCase(b.appName));
+            
+            runOnUiThread(() -> {
+                allApps = loadedApps;
+                filteredApps = new ArrayList<>(allApps);
+                adapter.notifyDataSetChanged();
+            });
+        }).start();
     }
 
     private void filterApps(String query) {
         filteredApps = allApps.stream()
                 .filter(app -> app.appName.toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
-        displayApps(filteredApps);
-    }
-
-    private void displayApps(List<AppShortcutIsland.AppInfo> apps) {
-        appListContainer.removeAllViews();
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayout container = new LinearLayout(this);
-        container.setOrientation(LinearLayout.VERTICAL);
-        
-        for (AppShortcutIsland.AppInfo app : apps) {
-            LinearLayout itemLayout = new LinearLayout(this);
-            itemLayout.setOrientation(LinearLayout.HORIZONTAL);
-            itemLayout.setPadding(16, 8, 16, 8);
-            
-            CheckBox checkBox = new CheckBox(this);
-            checkBox.setChecked(selectedPackages.contains(app.packageName));
-            checkBox.setEnabled(selectedPackages.contains(app.packageName) || selectedPackages.size() < MAX_SHORTCUTS);
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    if (selectedPackages.size() < MAX_SHORTCUTS) {
-                        selectedPackages.add(app.packageName);
-                        updateCheckBoxStates();
-                    } else {
-                        Toast.makeText(AppShortcutPickerActivity.this, 
-                                "Maximum " + MAX_SHORTCUTS + " apps allowed", 
-                                Toast.LENGTH_SHORT).show();
-                        checkBox.setChecked(false);
-                    }
-                } else {
-                    selectedPackages.remove(app.packageName);
-                    updateCheckBoxStates();
-                }
-            });
-            
-            itemLayout.addView(checkBox);
-            
-            TextView label = new TextView(this);
-            label.setText(app.appName);
-            label.setPadding(16, 0, 0, 0);
-            label.setTextSize(16);
-            itemLayout.addView(label);
-            
-            container.addView(itemLayout);
-        }
-        
-        scrollView.addView(container);
-        appListContainer.addView(scrollView);
-    }
-
-    private void updateCheckBoxStates() {
-        // Refresh the display to enable/disable checkboxes based on selection count
-        displayApps(filteredApps.isEmpty() ? allApps : filteredApps);
+        adapter.notifyDataSetChanged();
     }
 
     private void saveSelection() {
         sharedPreferences.edit().putStringSet(PREF_SELECTED_APPS, selectedPackages).apply();
         Toast.makeText(this, "Apps saved", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_picker_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            AppShortcutIsland.AppInfo app = filteredApps.get(position);
+            holder.label.setText(app.appName);
+            holder.icon.setImageDrawable(app.icon);
+            
+            holder.checkBox.setOnCheckedChangeListener(null);
+            holder.checkBox.setChecked(selectedPackages.contains(app.packageName));
+            
+            boolean canSelectMore = selectedPackages.size() < MAX_SHORTCUTS;
+            holder.checkBox.setEnabled(holder.checkBox.isChecked() || canSelectMore);
+            
+            holder.itemView.setOnClickListener(v -> {
+                boolean isChecked = !holder.checkBox.isChecked();
+                if (isChecked) {
+                    if (selectedPackages.size() < MAX_SHORTCUTS) {
+                        selectedPackages.add(app.packageName);
+                        holder.checkBox.setChecked(true);
+                        notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(AppShortcutPickerActivity.this, 
+                                "Maximum " + MAX_SHORTCUTS + " apps allowed", 
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    selectedPackages.remove(app.packageName);
+                    holder.checkBox.setChecked(false);
+                    notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return filteredApps.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView icon;
+            TextView label;
+            MaterialCheckBox checkBox;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                icon = itemView.findViewById(R.id.app_icon);
+                label = itemView.findViewById(R.id.app_label);
+                checkBox = itemView.findViewById(R.id.app_checkbox);
+            }
+        }
     }
 }

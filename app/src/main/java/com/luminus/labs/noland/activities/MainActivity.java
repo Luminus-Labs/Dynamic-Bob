@@ -14,8 +14,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.luminus.labs.noland.BuildConfig;
 import com.luminus.labs.noland.R;
+import com.luminus.labs.noland.plugins.AppShortcut.AppShortcutPickerActivity;
 import com.luminus.labs.noland.plugins.ExportedPlugins;
 import com.luminus.labs.noland.services.UpdaterService;
 import com.luminus.labs.noland.utils.adapters.RecylerViewSettingsAdapter;
@@ -83,21 +84,29 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             startActivity(intent);
             Toast.makeText(this, "Installed Apps -> NoLand", Toast.LENGTH_SHORT).show();
         });
-        settings.add(new SettingStruct("Manage Overlay Layout", "App Settings", SettingStruct.TYPE_CUSTOM) {
+        settings.add(new SettingStruct("Configure App Shortcuts", "Select apps to show in the island", "App Settings", SettingStruct.TYPE_CUSTOM) {
+            @Override
+            public void onClick(Context c) {
+                startActivity(new Intent(MainActivity.this, AppShortcutPickerActivity.class));
+            }
+        });
+
+        settings.add(new SettingStruct("Manage Overlay Layout", "Adjust the position and size of the Smart Edge", "App Settings", SettingStruct.TYPE_CUSTOM) {
             @Override
             public void onClick(Context c) {
                 startActivity(new Intent(MainActivity.this, OverlayLayoutSettingActivity.class));
             }
         });
 
-        settings.add(new SettingStruct("Overlay color", "App Settings", SettingStruct.TYPE_CUSTOM) {
+        settings.add(new SettingStruct("Overlay color", "Customize colors and transparency", "App Settings", SettingStruct.TYPE_CUSTOM) {
             @Override
             public void onClick(Context ctx) {
                 startActivity(new Intent(MainActivity.this, AppearanceActivity.class));
             }
         });
+
         if (BuildConfig.AUTO_UPDATE)
-            settings.add(new SettingStruct("Enable auto update checking", "App Settings", SettingStruct.TYPE_TOGGLE) {
+            settings.add(new SettingStruct("Auto update checking", "Keep the app up to date automatically", "App Settings", SettingStruct.TYPE_TOGGLE) {
                 @Override
                 public boolean onAttach(Context ctx) {
                     return sharedPreferences.getBoolean("update_enabled", true);
@@ -108,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     sharedPreferences.edit().putBoolean("update_enabled", checked).apply();
                 }
             });
-        settings.add(new SettingStruct("Invert long press and click functions", "App Settings", SettingStruct.TYPE_TOGGLE) {
+
+        settings.add(new SettingStruct("Invert gestures", "Swap long press and click functions", "App Settings", SettingStruct.TYPE_TOGGLE) {
             @Override
             public void onCheckChanged(boolean checked, Context ctx) {
                 sharedPreferences.edit().putBoolean("invert_click", checked).apply();
@@ -119,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 return sharedPreferences.getBoolean("invert_click", false);
             }
         });
-        settings.add(new SettingStruct("Enable on lockscreen", "App Settings", SettingStruct.TYPE_TOGGLE) {
+
+        settings.add(new SettingStruct("Enable on lockscreen", "Show the island even when the device is locked", "App Settings", SettingStruct.TYPE_TOGGLE) {
             @Override
             public boolean onAttach(Context ctx) {
                 return sharedPreferences.getBoolean("enable_on_lockscreen", false);
@@ -130,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 sharedPreferences.edit().putBoolean("enable_on_lockscreen", checked).apply();
             }
         });
-        settings.add(new SettingStruct("Copy crash logs to clipboard", "App Settings") {
+
+        settings.add(new SettingStruct("Copy crash logs", "Automatically copy errors to clipboard", "App Settings") {
             @Override
             public boolean onAttach(Context ctx) {
                 return sharedPreferences.getBoolean("clip_copy_enabled", true);
@@ -144,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ExportedPlugins.getPlugins().forEach(x -> {
             settings.add(null);
-            settings.add(new SettingStruct("Enable " + x.getName() + " Plugin", x.getName() + " Plugin Settings") {
+            settings.add(new SettingStruct("Enable " + x.getName() + " Plugin", "Toggle " + x.getName() + " functionality", x.getName() + " Plugin Settings") {
                              @Override
                              public boolean onAttach(Context ctx) {
                                  return sharedPreferences.getBoolean(x.getID() + "_enabled", true);
@@ -159,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             if (x.getSettings() != null) {
                 settings.addAll(x.getSettings());
             }
-            settings.add(null);
         });
         RecylerViewSettingsAdapter adapter = new RecylerViewSettingsAdapter(this, settings);
         recyclerView = findViewById(R.id.recycler_view);
@@ -271,52 +282,60 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         @SuppressLint("UseCompatLoadingForDrawables")
         @Override
         public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            int color = MaterialColors.getColor(MainActivity.this, com.google.android.material.R.attr.colorOnSecondary, getColor(R.color.md_theme_dark_secondary));
-            super.onDraw(c, parent, state);
-            int childCount = recyclerView.getChildCount();
-            int width = recyclerView.getWidth();
-            Rect cornerBounds = new Rect();
-            c.getClipBounds(cornerBounds);
+            int backgroundColor = MaterialColors.getColor(MainActivity.this, com.google.android.material.R.attr.colorSurfaceVariant, getColor(R.color.md_theme_dark_surfaceVariant));
+            int dividerColor = MaterialColors.getColor(MainActivity.this, com.google.android.material.R.attr.colorOutline, Color.GRAY);
+            
+            int childCount = parent.getChildCount();
+            if (childCount == 0) return;
+
+            Paint bgPaint = new Paint();
+            bgPaint.setColor(backgroundColor);
+            bgPaint.setAntiAlias(true);
+            
+            Paint dividerPaint = new Paint();
+            dividerPaint.setColor(dividerColor);
+            dividerPaint.setStrokeWidth(dpToInt(1));
+            dividerPaint.setAlpha(40); // Subtle divider
+
             for (int i = 0; i < childCount; i++) {
-                View childAt = recyclerView.getChildAt(i);
-                RecylerViewSettingsAdapter.ViewHolder viewHolder = (RecylerViewSettingsAdapter.ViewHolder) recyclerView.getChildViewHolder(childAt);
-                int vo = recyclerView.getChildAdapterPosition(childAt);
-                if (!viewHolder.isItem) {
-                    Drawable cornerBottom = getDrawable(R.drawable.rounded_corner_setting_bottom);
-                    Drawable cornerTop = getDrawable(R.drawable.rounded_corner_setting_top);
-                    if (recyclerView.getChildAt(i + 1) != null) {
-                        View v = recyclerView.getChildAt(i + 1);
-                        cornerTop.setBounds(cornerBounds.left, (int) v.getY() - dpToInt(20), cornerBounds.right, (int) v.getY());
-                        cornerTop.draw(c);
+                View child = parent.getChildAt(i);
+                RecylerViewSettingsAdapter.ViewHolder viewHolder = (RecylerViewSettingsAdapter.ViewHolder) parent.getChildViewHolder(child);
+                int position = parent.getChildAdapterPosition(child);
+
+                if (viewHolder == null || !viewHolder.isItem) continue;
+
+                int left = child.getLeft();
+                int right = child.getRight();
+                int top = child.getTop();
+                int bottom = child.getBottom();
+
+                // Draw main background rect
+                c.drawRect(left, top, right, bottom, bgPaint);
+
+                // Rounded caps logic
+                boolean isFirstInGroup = (position == 0 || settings.get(position - 1) == null);
+                boolean isLastInGroup = (position == settings.size() - 1 || settings.get(position + 1) == null);
+
+                if (isFirstInGroup) {
+                    Drawable roundedTop = getDrawable(R.drawable.rounded_corner_setting_top);
+                    if (roundedTop != null) {
+                        // Draw the rounded cap with height matching the item vertical padding (12dp)
+                        roundedTop.setBounds(left, top - dpToInt(12), right, top + dpToInt(1));
+                        roundedTop.draw(c);
                     }
-                    if (recyclerView.getChildAt(i - 1) != null) {
-                        View v = recyclerView.getChildAt(i - 1);
-                        cornerBottom.setBounds(cornerBounds.left, v.getBottom(), cornerBounds.right, v.getBottom() + dpToInt(20));
-                        cornerBottom.draw(c);
+                }
+                
+                if (isLastInGroup) {
+                    Drawable roundedBottom = getDrawable(R.drawable.rounded_corner_setting_bottom);
+                    if (roundedBottom != null) {
+                        roundedBottom.setBounds(left, bottom - dpToInt(1), right, bottom + dpToInt(12));
+                        roundedBottom.draw(c);
                     }
                 } else {
-                    Rect bounds = new Rect(cornerBounds.left, (int) childAt.getY(), cornerBounds.right, childAt.getBottom());
-                    c.drawRect(bounds, new Paint() {
-                        {
-                            setColor(color);
-                        }
-                    });
+                    // Draw divider if not last
+                    float margin = dpToInt(20);
+                    c.drawLine(left + margin, bottom, right - margin, bottom, dividerPaint);
                 }
-
-            }
-            if (recyclerView.getChildCount() < 1) return;
-            if (((RecylerViewSettingsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(0))).isItem) {
-                Drawable roundedCornerTop = getDrawable(R.drawable.rounded_corner_setting_top);
-                roundedCornerTop.setBounds(cornerBounds.left, cornerBounds.top, cornerBounds.right, (int) recyclerView.getChildAt(0).getY());
-                roundedCornerTop.draw(c);
-            }
-            if (((RecylerViewSettingsAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(recyclerView.getChildCount() - 1))).isItem) {
-                Drawable roundedCornerBottom = getDrawable(R.drawable.rounded_corner_setting_bottom);
-                roundedCornerBottom.setBounds(cornerBounds.left,
-                        recyclerView.getChildAt(recyclerView.getChildCount() - 1).getBottom(),
-                        cornerBounds.right,
-                        recyclerView.getChildAt(recyclerView.getChildCount() - 1).getBottom() + dpToInt(20));
-                roundedCornerBottom.draw(c);
             }
         }
     }

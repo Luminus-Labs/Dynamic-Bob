@@ -53,15 +53,28 @@ public class RecylerViewSettingsAdapter extends RecyclerView.Adapter<RecylerView
             }
             return;
         }
-        holder.textView.setText(settings.get(position).title);
+        SettingStruct setting = settings.get(position);
+        holder.textView.setText(setting.title);
+        
+        if (holder.descriptionView != null) {
+            if (setting.description != null && !setting.description.isEmpty()) {
+                holder.descriptionView.setText(setting.description);
+                holder.descriptionView.setVisibility(View.VISIBLE);
+            } else {
+                holder.descriptionView.setVisibility(View.GONE);
+            }
+        }
+
         if (holder.ViewType == SettingStruct.TYPE_CUSTOM) {
-            holder.itemView.setOnClickListener(l -> settings.get(position).onClick(context));
+            holder.itemView.setOnClickListener(l -> setting.onClick(context));
         }
         if (holder.ViewType == SettingStruct.TYPE_TOGGLE) {
+            holder.switchBtn.setOnCheckedChangeListener(null);
+            holder.switchBtn.setChecked(setting.onAttach(context));
             holder.switchBtn.setOnCheckedChangeListener((compoundButton, b) -> {
-                settings.get(position).onCheckChanged(b, context);
+                setting.onCheckChanged(b, context);
             });
-            holder.switchBtn.setChecked(settings.get(position).onAttach(context));
+            holder.itemView.setOnClickListener(v -> holder.switchBtn.toggle());
         }
     }
 
@@ -72,6 +85,7 @@ public class RecylerViewSettingsAdapter extends RecyclerView.Adapter<RecylerView
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
+        public TextView descriptionView;
         public MaterialSwitch switchBtn;
         public boolean isItem;
         public View itemView;
@@ -87,6 +101,7 @@ public class RecylerViewSettingsAdapter extends RecyclerView.Adapter<RecylerView
                 return;
             }
             textView = itemView.findViewById(R.id.enable_text);
+            descriptionView = itemView.findViewById(R.id.description_text);
             if (itemViewType == SettingStruct.TYPE_TOGGLE) {
                 switchBtn = itemView.findViewById(R.id.enable_switch2);
             }

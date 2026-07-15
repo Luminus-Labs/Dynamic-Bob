@@ -40,4 +40,5 @@
     <string name="enable_hardware_acceleration">Enable Hardware Acceleration</string>
     <string name="all">All</string>
     <string name="access_description">Access Description</string>
+    <string name="enable_smart_edge_desc">Required for overlay and shortcuts</string>
 </resources>

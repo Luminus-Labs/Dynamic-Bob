@@ -4,72 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/enable_switch"
-            style="@style/Widget.Material3.CardView.Elevated"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checkable="false"
-            android:clickable="true"
-            android:elevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorOutline"
-            android:paddingHorizontal="10dp"
-            app:cardCornerRadius="24dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal= "20dp"
-                android:paddingVertical="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/enable_smart_edge"
-                    android:fontFamily="@font/ndot"
-                    android:textAppearance="@style/TextAppearance.App.Headline6" />
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="20dp"
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="20dp" />
-    </LinearLayout>
-
-
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:liftOnScroll="true"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             style="?attr/collapsingToolbarLayoutLargeStyle"
             android:layout_width="match_parent"
-            android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
+            android:layout_height="180dp"
             app:title="@string/app_name"
-            app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline3"
+            app:titleCentered="false"
+            app:contentScrim="?attr/colorSurface"
+            app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline2"
             app:expandedTitleTextColor="?attr/colorPrimary"
             app:expandedTitleMarginStart="24dp"
-            app:expandedTitleMarginBottom="24dp"
+            app:expandedTitleMarginBottom="20dp"
             app:collapsedTitleTextAppearance="@style/TextAppearance.App.Headline6"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlwaysCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -78,4 +33,77 @@
                 app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="32dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/enable_switch"
+                style="@style/Widget.Material3.CardView.Elevated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/enable_smart_edge"
+                            android:fontFamily="@font/ndot"
+                            android:textAppearance="@style/TextAppearance.App.Headline6"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/enable_smart_edge_desc"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:alpha="0.7" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_baseline_open_in_new_24"
+                        android:contentDescription="Open accessibility settings"
+                        app:tint="?attr/colorPrimary" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-16dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

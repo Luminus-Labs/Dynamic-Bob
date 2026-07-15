@@ -8,17 +8,27 @@ public class SettingStruct {
     public static final int TYPE_CUSTOM = 2;
 
     public String title;
+    public String description;
     public String category;
     public int type;
 
     public SettingStruct(String title, String category) {
-        this(title, category, TYPE_TOGGLE);
+        this(title, "", category, TYPE_TOGGLE);
+    }
+
+    public SettingStruct(String title, String description, String category) {
+        this(title, description, category, TYPE_TOGGLE);
+    }
+
+    public SettingStruct(String title, String description, String category, int type) {
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.type = type;
     }
 
     public SettingStruct(String title, String category, int type) {
-        this.title = title;
-        this.category = category;
-        this.type = type;
+        this(title, "", category, type);
     }
 
     public boolean onAttach(Context ctx) {

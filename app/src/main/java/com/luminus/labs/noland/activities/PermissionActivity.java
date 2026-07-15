@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.CheckBox;
 import android.widget.Toast;
+import android.view.View;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,6 +63,8 @@ public class PermissionActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, IMAGE_PICK_CODE);
             }
         });
+
+        findViewById(R.id.continue_btn).setOnClickListener(v -> finish());
     }
 
     @Override
@@ -73,11 +78,11 @@ public class PermissionActivity extends AppCompatActivity {
         super.onResume();
         int checks = 0;
         if (Settings.Secure.getString(this.getContentResolver(), "enabled_notification_listeners") != null && Settings.Secure.getString(this.getContentResolver(), "enabled_notification_listeners").contains(getApplicationContext().getPackageName())) {
-            ((CheckBox) findViewById(R.id.notification_access_checkbox)).setChecked(true);
+            ((MaterialCheckBox) findViewById(R.id.notification_access_checkbox)).setChecked(true);
             checks++;
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            ((CheckBox) findViewById(R.id.record_audio_checkbox)).setChecked(true);
+            ((MaterialCheckBox) findViewById(R.id.record_audio_checkbox)).setChecked(true);
             checks++;
         }
 
@@ -85,19 +90,21 @@ public class PermissionActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13+ check for media storage access
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-                ((CheckBox) findViewById(R.id.storage_access_checkbox)).setChecked(true);
+                ((MaterialCheckBox) findViewById(R.id.storage_access_checkbox)).setChecked(true);
                 checks++;
             }
         } else {
             // Android 12 and below check for legacy storage permission
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                ((CheckBox) findViewById(R.id.storage_access_checkbox)).setChecked(true);
+                ((MaterialCheckBox) findViewById(R.id.storage_access_checkbox)).setChecked(true);
                 checks++;
             }
         }
 
         if (checks >= 3) {
-            finish();
+            findViewById(R.id.continue_btn).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.continue_btn).setVisibility(View.GONE);
         }
     }
 }
