@@ -56,6 +56,13 @@ public class BatteryPlugin extends BasePlugin {
         // ACTION_BATTERY_CHANGED is a system broadcast, so it doesn't need a flag, but we'll use the same pattern for consistency if needed.
         // Actually, for system broadcasts, the flag is not required.
         ctx.registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
+        IntentFilter colorFilter = new IntentFilter(ctx.getPackageName() + ".COLOR_CHANGED");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            ctx.registerReceiver(receiver, colorFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            ctx.registerReceiver(receiver, colorFilter);
+        }
     }
 
     private View mView;
@@ -124,12 +131,7 @@ public class BatteryPlugin extends BasePlugin {
             tv.setText((int) batteryPercent + "%");
             batteryImageView.updateBatteryPercent(batteryPercent);
             SharedPreferences prefs = ctx.getSharedPreferences(ctx.getPackageName(), Context.MODE_PRIVATE);
-            IntentFilter filter = new IntentFilter(ctx.getPackageName() + ".COLOR_CHANGED");
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                ctx.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
-            } else {
-                ctx.registerReceiver(receiver, filter);
-            }
+            
             if (batteryPercent > 80) {
                 batteryImageView.setStrokeColor(prefs.getInt("Allaccent_color", Color.RED));
                 tv.setTextColor(prefs.getInt("Allaccent_color", Color.RED));
@@ -175,6 +177,7 @@ public class BatteryPlugin extends BasePlugin {
     @Override
     public void onDestroy() {
         ctx.unregisterReceiver(mBroadcastReceiver);
+        ctx.unregisterReceiver(receiver);
     }
 
     @Override

@@ -28,18 +28,22 @@ public class MediaCallback extends MediaController.Callback {
     private boolean isPlaying = true;
 
     private void updateView() {
-        if (!isPlaying) return;
         if (mCurrent.getMetadata() == null) return;
         Bitmap b = mediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
-        if (b == null) {
-            return;
-        }
-        String title = mediaMetadata.getText(MediaMetadata.METADATA_KEY_TITLE).toString();
-        String artist = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+        // Fallback if no album art
+        String title = mediaMetadata.getText(MediaMetadata.METADATA_KEY_TITLE) != null ? 
+                mediaMetadata.getText(MediaMetadata.METADATA_KEY_TITLE).toString() : "Unknown Title";
+        String artist = mediaMetadata.getString(MediaMetadata.METADATA_KEY_ARTIST) != null ?
+                mediaMetadata.getString(MediaMetadata.METADATA_KEY_ARTIST) : "Unknown Artist";
+        
         ctx.queueUpdate(new UpdateQueueStruct(artist, title, b));
         ctx.openOverlay(mCurrent.getPackageName());
         ctx.mCurrent = mCurrent;
-        ctx.onPlayerResume(false);
+        if (isPlaying) {
+            ctx.onPlayerResume(false);
+        } else {
+            ctx.onPlayerPaused(false);
+        }
     }
 
 
@@ -48,10 +52,11 @@ public class MediaCallback extends MediaController.Callback {
         super.onPlaybackStateChanged(state);
         try {
             if (state == null || mCurrent.getMetadata() == null) return;
-            MediaMetadata targetMetada = mCurrent.getMetadata();
+            MediaMetadata targetMetadata = mCurrent.getMetadata();
             boolean isPlaying2 = state.getState() == PlaybackState.STATE_PLAYING;
+            
             if (mediaMetadata != null && mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE) != null
-                    && mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE).equals(targetMetada.getString(MediaMetadata.METADATA_KEY_TITLE)) && ctx.overlayOpen()) {
+                    && mediaMetadata.getString(MediaMetadata.METADATA_KEY_TITLE).equals(targetMetadata.getString(MediaMetadata.METADATA_KEY_TITLE)) && ctx.overlayOpen()) {
                 if (ctx.mCurrent != null && ctx.mCurrent.getPackageName().equals(mCurrent.getPackageName())) {
                     if (!isPlaying2) ctx.onPlayerPaused(true);
                     else ctx.onPlayerResume(true);
@@ -65,8 +70,8 @@ public class MediaCallback extends MediaController.Callback {
                 if (!isPlaying) ctx.onPlayerPaused(false);
                 else ctx.onPlayerResume(false);
             }
-            if (!isPlaying) return;
-            mediaMetadata = targetMetada;
+            
+            mediaMetadata = targetMetadata;
             ctx.mCurrent = mCurrent;
             if (ctx.expanded) {
                 updateView();
