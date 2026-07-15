@@ -165,19 +165,6 @@ public class MediaSessionPlugin extends BasePlugin {
         if (mCurrent.getMetadata() == null) return;
         Bitmap bm = mCurrent.getMetadata().getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
         if (bm == null) return;
-        //int dc = getDominantColor(bm, ctx);
-        //if (isColorDark(dc)) {
-            //dc = lightenColor(dc);
-        //}
-
-        SharedPreferences prefs = ctx.getSharedPreferences(ctx.getPackageName(), Context.MODE_PRIVATE);
-        IntentFilter filter = new IntentFilter(ctx.getPackageName() + ".COLOR_CHANGED");
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            ctx.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            ctx.registerReceiver(receiver, filter);
-        }
-       // visualizer.setColor( prefs.getInt("Allaccent_color", Color.RED));
     }
 
     private int lightenColor(int colorin) {
@@ -246,20 +233,23 @@ public class MediaSessionPlugin extends BasePlugin {
 
         mediaSessionManager = (MediaSessionManager) ctx.getSystemService(Context.MEDIA_SESSION_SERVICE);
         mediaSessionManager.addOnActiveSessionsChangedListener(listnerForActiveSessions, new
-
                 ComponentName(ctx, NotiService.class));
         mediaSessionManager.getActiveSessions(new
-
                         ComponentName(ctx, NotiService.class)).
-
                 forEach(x ->
-
                 {
                     if (callbackMap.get(x.getPackageName()) != null) return;
                     MediaCallback c = new MediaCallback(x, this);
                     callbackMap.put(x.getPackageName(), c);
                     x.registerCallback(c);
                 });
+
+        IntentFilter filter = new IntentFilter(ctx.getPackageName() + ".COLOR_CHANGED");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            ctx.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            ctx.registerReceiver(receiver, filter);
+        }
     }
 
 
@@ -366,6 +356,9 @@ public class MediaSessionPlugin extends BasePlugin {
         if (visualizer != null) visualizer.release();
         if (mediaSessionManager != null)
             mediaSessionManager.removeOnActiveSessionsChangedListener(listnerForActiveSessions);
+        if (ctx != null) {
+            ctx.unregisterReceiver(receiver);
+        }
         mediaSessionManager = null;
         mCurrent = null;
         mView = null;

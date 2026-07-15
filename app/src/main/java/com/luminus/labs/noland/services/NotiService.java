@@ -36,7 +36,7 @@ public class NotiService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        super.onNotificationRemoved(sbn);
+        super.onNotificationPosted(sbn);
         Intent intent = new Intent(getPackageName() + ".NOTIFICATION_POSTED");
         Notification notification = sbn.getNotification();
         intent.putExtra("package_name", sbn.getPackageName());
@@ -51,16 +51,19 @@ public class NotiService extends NotificationListenerService {
         } catch (Exception e) {
             //ignore
         }
+        
+        // Replace existing notification if present
+        notifications.removeIf(x -> x.getId() == sbn.getId() && x.getPackageName().equals(sbn.getPackageName()));
         notifications.add(sbn);
         sendBroadcast(intent);
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        super.onNotificationPosted(sbn);
+        super.onNotificationRemoved(sbn);
         Intent intent = new Intent(getPackageName() + ".NOTIFICATION_REMOVED");
         intent.putExtra("id", sbn.getId());
-        notifications.remove(sbn);
+        notifications.removeIf(x -> x.getId() == sbn.getId() && x.getPackageName().equals(sbn.getPackageName()));
         sendBroadcast(intent);
     }
 

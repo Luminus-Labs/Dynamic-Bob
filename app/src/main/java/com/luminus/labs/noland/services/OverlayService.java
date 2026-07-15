@@ -488,13 +488,13 @@ public class OverlayService extends AccessibilityService {
             if (!expandedPrev) last_min_size = mView.getMeasuredWidth();
         }
         ValueAnimator height_anim = ValueAnimator.ofInt(params.height, h);
-        height_anim.setDuration(800);
+        height_anim.setDuration(400); // Snappier
         height_anim.addUpdateListener(valueAnimator -> {
             params.height = (int) valueAnimator.getAnimatedValue();
             mWindowManager.updateViewLayout(mView, params);
         });
         ValueAnimator width_anim = ValueAnimator.ofInt(mView.getMeasuredWidth(), w);
-        width_anim.setDuration(800);
+        width_anim.setDuration(400); // Snappier
         width_anim.addUpdateListener(v2 -> {
             params.width = Math.abs((int) v2.getAnimatedValue());
             mWindowManager.updateViewLayout(mView, params);
@@ -505,14 +505,14 @@ public class OverlayService extends AccessibilityService {
                 super.onAnimationStart(animation);
                 callBackStart.onFinish();
                 if (expanded && params.x != 0) {
-                    ValueAnimator v = ValueAnimator.ofInt(params.x, 0).setDuration(500);
+                    ValueAnimator v = ValueAnimator.ofInt(params.x, 0).setDuration(300);
                     v.addUpdateListener(valueAnimator -> {
                         params.x = (int) valueAnimator.getAnimatedValue();
                     });
                     v.start();
                 }
                 if (!expanded && x != params.x) {
-                    ValueAnimator v = ValueAnimator.ofInt(params.x, x).setDuration(500);
+                    ValueAnimator v = ValueAnimator.ofInt(params.x, x).setDuration(300);
                     v.addUpdateListener(valueAnimator -> {
                         params.x = (int) valueAnimator.getAnimatedValue();
                     });
@@ -533,8 +533,8 @@ public class OverlayService extends AccessibilityService {
             }
         });
         if (w != 0) {
-            width_anim.setInterpolator(new OvershootInterpolator(1f));
-            height_anim.setInterpolator(new OvershootInterpolator(1f));
+            width_anim.setInterpolator(new OvershootInterpolator(0.8f));
+            height_anim.setInterpolator(new OvershootInterpolator(0.8f));
         }
 
         width_anim.start();
@@ -553,14 +553,14 @@ public class OverlayService extends AccessibilityService {
             if (!expandedPrev) last_min_size = mView.getMeasuredWidth();
         }
         ValueAnimator height_anim = ValueAnimator.ofInt(params.height, h);
-        height_anim.setDuration(800);
+        height_anim.setDuration(400); // Snappier
         height_anim.addUpdateListener(valueAnimator -> {
             params.height = (int) valueAnimator.getAnimatedValue();
             mWindowManager.updateViewLayout(mView, params);
         });
 
         ValueAnimator width_anim = ValueAnimator.ofInt(mView.getMeasuredWidth(), w);
-        width_anim.setDuration(800);
+        width_anim.setDuration(400); // Snappier
         width_anim.addUpdateListener(v2 -> {
             onChange.onChange(v2.getAnimatedFraction());
             params.width = Math.abs((int) v2.getAnimatedValue());
@@ -572,14 +572,14 @@ public class OverlayService extends AccessibilityService {
                 super.onAnimationStart(animation);
                 callBackStart.onFinish();
                 if (expanded && params.x != 0) {
-                    ValueAnimator v = ValueAnimator.ofInt(params.x, 0).setDuration(500);
+                    ValueAnimator v = ValueAnimator.ofInt(params.x, 0).setDuration(300);
                     v.addUpdateListener(valueAnimator -> {
                         params.x = (int) valueAnimator.getAnimatedValue();
                     });
                     v.start();
                 }
                 if (!expanded && x != params.x) {
-                    ValueAnimator v = ValueAnimator.ofInt(params.x, x).setDuration(500);
+                    ValueAnimator v = ValueAnimator.ofInt(params.x, x).setDuration(300);
                     v.addUpdateListener(valueAnimator -> {
                         params.x = (int) valueAnimator.getAnimatedValue();
                     });
@@ -600,8 +600,8 @@ public class OverlayService extends AccessibilityService {
             }
         });
         if (w != 0) {
-            width_anim.setInterpolator(new OvershootInterpolator(1f));
-            height_anim.setInterpolator(new OvershootInterpolator(1f));
+            width_anim.setInterpolator(new OvershootInterpolator(0.8f));
+            height_anim.setInterpolator(new OvershootInterpolator(0.8f));
         }
 
         width_anim.start();
