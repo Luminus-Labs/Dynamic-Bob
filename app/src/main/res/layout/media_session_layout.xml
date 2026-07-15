@@ -33,7 +33,7 @@
         android:paddingVertical="5dp"
         tools:ignore="RtlSymmetry,UselessLeaf">
 
-        <com.luminus.labs.noland.plugins.MediaSession.SongVisualizer
+        <com.luminus.labs.dynamicbob.plugins.MediaSession.SongVisualizer
             android:id="@+id/visualizer"
             android:layout_width="0dp"
             android:layout_height="0dp"

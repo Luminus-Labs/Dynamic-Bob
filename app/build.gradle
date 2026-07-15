@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.luminus.labs.noland'
+    namespace 'com.luminus.labs.dynamicbob'
     compileSdk 34
     sourceSets {
         github {
@@ -11,7 +11,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.luminus.labs.noland"
+        applicationId "com.luminus.labs.dynamicbob"
         minSdk 26
         targetSdk 34
         versionCode 4

@@ -66,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.luminus.labs.noland.views.ViewPagerOnClickable
+    <com.luminus.labs.dynamicbob.views.ViewPagerOnClickable
 
         android:id="@+id/text_info"
         android:layout_width="0dp"
